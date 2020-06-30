@@ -9,34 +9,42 @@ namespace RSA_Implementation
         static void Main(string[] args)
         {
             RandomNumberGenerator rng = RandomNumberGenerator.Create();
-            for (int i = 0; i < 1; ++i)
-            {
-                byte[] bytes = new byte[100];
-                rng.GetBytes(bytes);
-                RSAKeyPair key = RSA.GenerateKeyPair(2048);
 
-                Console.WriteLine("[E]");
-                Console.WriteLine(Convert.ToBase64String(key.Public.E.ToByteArray()));
+            byte[] bytes = new byte[100];
+            rng.GetBytes(bytes);
+            RSAKeyPair key = RSA.GenerateKeyPair(2048);
 
-                Console.WriteLine("[D]");
-                Console.WriteLine(Convert.ToBase64String(key.Private.D.ToByteArray()));
+            Console.Write("[E]: ");
+            Console.WriteLine(Convert.ToBase64String(key.Public.E.ToByteArray()) + "\n");
 
-                Console.WriteLine("[N]");
-                Console.WriteLine(Convert.ToBase64String(key.Public.N.ToByteArray()));
+            Console.Write("[D]: ");
+            Console.WriteLine(Convert.ToBase64String(key.Private.D.ToByteArray()) + "\n");
 
-                Console.WriteLine("[Plain]");
-                Console.WriteLine(Convert.ToBase64String(bytes));
+            Console.Write("[N]: ");
+            Console.WriteLine(Convert.ToBase64String(key.Public.N.ToByteArray()) + "\n");
 
-                byte[] enc = RSA.Encrypt(bytes, key.Public);
+            Console.WriteLine("[Plain]");
+            Console.WriteLine(Convert.ToBase64String(bytes) + "\n");
 
-                Console.WriteLine("[Encrypted]");
-                Console.WriteLine(Convert.ToBase64String(enc));
+            byte[] enc = RSA.Encrypt(bytes, key.Public);
 
-                byte[] dec = RSA.Decrypt(enc, key.Private);
+            Console.WriteLine("[Encrypted]");
+            Console.WriteLine(Convert.ToBase64String(enc) + "\n");
 
-                Console.WriteLine("[Decrypted]");
-                Console.WriteLine(Convert.ToBase64String(dec));
-            }
+            byte[] dec = RSA.Decrypt(enc, key.Private);
+
+            Console.WriteLine("[Decrypted]");
+            Console.WriteLine(Convert.ToBase64String(dec) + "\n");
+
+            bool isSame = bytes.Length == dec.Length;
+            for (int j = 0; j < bytes.Length && isSame; ++j)
+                if (bytes[j] != dec[j])
+                    isSame = false;
+
+            if (isSame)
+                Console.WriteLine("평문과 복호문이 같습니다.\n");
+            else
+                Console.WriteLine("평문과 복호문이 다릅니다.\n");
         }
     }
 }
